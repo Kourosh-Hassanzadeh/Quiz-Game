@@ -1,8 +1,15 @@
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
 
 public class Server {
     ServerSocket mServer;
@@ -25,7 +32,7 @@ public class Server {
                 // add Thread to "threads" list
                 threads.add(t);
                 if (threads.size() >= limit) {
-                    t.start();
+                    t.run();
                 } else {
                     System.out.println("the are not enough users! please wait");
                 }
@@ -41,5 +48,6 @@ public class Server {
 
     public static void main(String[] args) {
         new Server();
+
     }
 }

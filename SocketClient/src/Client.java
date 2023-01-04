@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class Client {
     Socket mSocket;
@@ -27,6 +28,11 @@ public class Client {
 
             reader = new DataInputStream(fromServerStream);
             writer = new PrintWriter(toServerStream, true);
+
+            Scanner s = new Scanner(fromServerStream);
+            //String question = reader.readLine();
+            String question = s.nextLine();
+            System.out.println(question);
 
         } catch (UnknownHostException e) {
         } catch (IOException e) {

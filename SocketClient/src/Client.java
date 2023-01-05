@@ -1,11 +1,8 @@
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+
 
 public class Client {
     Socket mSocket;
@@ -18,7 +15,7 @@ public class Client {
 
     public Client() {
         try {
-            mSocket = new Socket(serverAddress, port);
+            mSocket = new Socket(serverAddress, 9083);
             System.out.println("connect to server ....");
 
             // input stream (stream from server)
@@ -30,13 +27,33 @@ public class Client {
             writer = new PrintWriter(toServerStream, true);
 
             Scanner s = new Scanner(fromServerStream);
-            //String question = reader.readLine();
+            questionHandler(s);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void questionHandler(Scanner s){
+
+        while(true) {
+
             String question = s.nextLine();
             System.out.println(question);
 
-        } catch (UnknownHostException e) {
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            for (int i = 0; i < 4 ; i++) {
+                String option = s.nextLine();
+                System.out.println(option);
+            }
+
+//            LocalTime time = LocalTime.now();
+//            LocalTime time1 = time.plusSeconds(45);
+            Scanner sc = new Scanner(System.in);
+            int ans = sc.nextInt();
+
+            writer.println(ans);
+            System.out.println(s.nextLine());
+            System.out.println("your score is: " + s.nextLine());
         }
     }
 
@@ -44,3 +61,19 @@ public class Client {
         new Client();
     }
 }
+
+//class Timing {
+//    Timer timer;
+//
+//    public Timing(int seconds) {
+//        timer = new Timer();
+//        timer.schedule(new RemindTask(), seconds*1000);
+//    }
+//
+//    class RemindTask extends TimerTask {
+//        public void run() {
+//            timer.cancel(); //Terminate the timer thread
+//        }
+//    }
+//}
+

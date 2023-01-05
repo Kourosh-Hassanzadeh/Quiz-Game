@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class Server {
     ServerSocket mServer;
-    int serverPort = 9090;
+    int serverPort = 9083;
     ArrayList<Thread> threads = new ArrayList<Thread>();
     int limit = 3;
 
@@ -24,6 +24,7 @@ public class Server {
             mServer = new ServerSocket(serverPort);
             System.out.println("Server Created!");
             // always running
+
             while (true) {
                 Socket client = mServer.accept();
                 System.out.println("Connected to New Client!");
@@ -31,9 +32,16 @@ public class Server {
                 Thread t = new Thread(new ClientManager(this, client));
                 // add Thread to "threads" list
                 threads.add(t);
-                if (threads.size() >= limit) {
-                    t.run();
-                } else {
+                if (threads.size() == limit) {
+
+                    for(int j=0 ; j<threads.size() ; j++) {
+                        threads.get(j).start();
+                    }
+                }
+                else if(threads.size()>3){
+                    t.start();
+                }
+                else {
                     System.out.println("the are not enough users! please wait");
                 }
 
@@ -48,6 +56,5 @@ public class Server {
 
     public static void main(String[] args) {
         new Server();
-
     }
 }

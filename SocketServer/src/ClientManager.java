@@ -4,11 +4,7 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Iterator;
 import java.util.Scanner;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 public class ClientManager extends Thread {
     Socket clientHolder;
@@ -22,6 +18,7 @@ public class ClientManager extends Thread {
         serverHolder = server;
         clientHolder = client;
     }
+
     @Override
     public void run() {
         try {
@@ -34,40 +31,42 @@ public class ClientManager extends Thread {
             writer = new PrintWriter(toClientStream, true);
 
 
-            while (true) {
-                JSONParser parser = new JSONParser();
-                try{
-                    Object obj = parser.parse(new FileReader("../questions.json"));
-                    questionHandler(obj);
+            JSONParser parser = new JSONParser();
+            try {
+                Object obj = parser.parse(new FileReader("../questions.json"));
+                questionHandler(obj);
 
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void questionHandler(Object obj){
-        JSONArray array = (JSONArray)obj;
-        for(int i = 0 ; i<array.size(); i++){
-            JSONObject object = (JSONObject)array.get(i);
-            String question = (String)object.get("question");
-            JSONArray options = (JSONArray)object.get("options");
-            Iterator iterator = options.iterator();
-            long answer = (long) object.get("answer");
+
+    public void questionHandler(Object obj) {
+
+        int score = 0;
+        JSONArray array = (JSONArray) obj;
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject object = (JSONObject) array.get(i);
+            String question = (String) object.get("question");
             writer.println(question);
-            while(iterator.hasNext()) {
-                writer.println(iterator.next());
+            JSONArray options = (JSONArray) object.get("options");
+            for (Object option : options) {
+                writer.println(option);
             }
-            Scanner sc = new Scanner(System.in);
-            int n = sc.nextInt();
-            if(n == answer){
-                System.out.println("correct");
+
+            int answer = (int) (long) object.get("answer");
+            Scanner s = new Scanner(fromClientStream);
+            String ans = s.nextLine();
+            if (answer == Integer.parseInt(ans)) {
+                writer.println("correct");
+                score++;
+            } else {
+                writer.println("wrong answer");
             }
+            writer.println(score);
         }
-
     }
-
 }

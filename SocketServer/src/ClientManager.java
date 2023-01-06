@@ -4,32 +4,35 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientManager extends Thread {
     Socket clientHolder;
     Server serverHolder;
+    String clientName;
     InputStream fromClientStream;
     OutputStream toClientStream;
     DataInputStream reader;
     PrintWriter writer;
+    int score = 0;
 
-    public ClientManager(Server server, Socket client) {
+    public ClientManager(Server server, Socket client, String name) {
         serverHolder = server;
         clientHolder = client;
+        clientName = name;
     }
 
     @Override
     public void run() {
         try {
-            // input stream (stream from client)
             fromClientStream = clientHolder.getInputStream();
-            // output stream (stream to client)
             toClientStream = clientHolder.getOutputStream();
 
             reader = new DataInputStream(fromClientStream);
             writer = new PrintWriter(toClientStream, true);
 
+            serverHolder.addClientManager(clientName, this);
 
             JSONParser parser = new JSONParser();
             try {
@@ -39,14 +42,14 @@ public class ClientManager extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void questionHandler(Object obj) {
+    public void questionHandler(Object obj) throws InterruptedException {
 
-        int score = 0;
         JSONArray array = (JSONArray) obj;
         for (int i = 0; i < array.size(); i++) {
             JSONObject object = (JSONObject) array.get(i);
@@ -56,17 +59,27 @@ public class ClientManager extends Thread {
             for (Object option : options) {
                 writer.println(option);
             }
-
+            Thread.sleep(10000);
             int answer = (int) (long) object.get("answer");
             Scanner s = new Scanner(fromClientStream);
             String ans = s.nextLine();
-            if (answer == Integer.parseInt(ans)) {
-                writer.println("correct");
-                score++;
-            } else {
-                writer.println("wrong answer");
+            if (ans.equals("")) {
+                writer.println("No answer has entered");
             }
-            writer.println(score);
+            else if (answer == Integer.parseInt(ans)) {
+                score++;
+                writer.println("Correct");
+                serverHolder.updateScore();
+            }
+            else {
+                writer.println("Wrong Answer");
+            }
+            writer.println(serverHolder.names + " score is: " + Server.scores);
+            Thread.sleep(5000);
         }
+    }
+
+    public int getScore() {
+        return score;
     }
 }

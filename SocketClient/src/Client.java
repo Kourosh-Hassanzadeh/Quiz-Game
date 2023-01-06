@@ -15,12 +15,11 @@ public class Client {
 
     public Client() {
         try {
-            mSocket = new Socket(serverAddress, 9083);
+
+            mSocket = new Socket(serverAddress, 1025);
             System.out.println("connect to server ....");
 
-            // input stream (stream from server)
             fromServerStream = mSocket.getInputStream();
-            // output stream (stream to server)
             toServerStream = mSocket.getOutputStream();
 
             reader = new DataInputStream(fromServerStream);
@@ -34,7 +33,7 @@ public class Client {
             System.out.println(e.getMessage());
         }
     }
-    public void questionHandler(Scanner s){
+    public void questionHandler(Scanner s) {
 
         while(true) {
 
@@ -46,34 +45,18 @@ public class Client {
                 System.out.println(option);
             }
 
-//            LocalTime time = LocalTime.now();
-//            LocalTime time1 = time.plusSeconds(45);
             Scanner sc = new Scanner(System.in);
-            int ans = sc.nextInt();
+            String ans = sc.nextLine();
 
             writer.println(ans);
+
             System.out.println(s.nextLine());
-            System.out.println("your score is: " + s.nextLine());
+            System.out.println(s.nextLine());
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         new Client();
     }
 }
-
-//class Timing {
-//    Timer timer;
-//
-//    public Timing(int seconds) {
-//        timer = new Timer();
-//        timer.schedule(new RemindTask(), seconds*1000);
-//    }
-//
-//    class RemindTask extends TimerTask {
-//        public void run() {
-//            timer.cancel(); //Terminate the timer thread
-//        }
-//    }
-//}
 

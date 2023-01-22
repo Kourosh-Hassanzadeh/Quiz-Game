@@ -7,6 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="json-simple-1.1.1" level="application" />
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="library" name="@types/json-js" level="application" />
+    <orderEntry type="library" name="@types/json-patch" level="application" />
   </component>
 </module>

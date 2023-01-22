@@ -4,7 +4,6 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientManager extends Thread {
@@ -59,23 +58,25 @@ public class ClientManager extends Thread {
             for (Object option : options) {
                 writer.println(option);
             }
-            Thread.sleep(10000);
+            serverHolder.allow2chat = false;
+            Thread.sleep(15000);
+            serverHolder.allow2chat = true;
             int answer = (int) (long) object.get("answer");
             Scanner s = new Scanner(fromClientStream);
             String ans = s.nextLine();
-            if (ans.equals("")) {
-                writer.println("No answer has entered");
-            }
-            else if (answer == Integer.parseInt(ans)) {
-                score++;
-                writer.println("Correct");
-                serverHolder.updateScore();
-            }
-            else {
-                writer.println("Wrong Answer");
+            if (ans.length() == 1) {                                // یعنی احتمالا جواب است
+                if (ans.equals("")) {
+                    writer.println("No answer has entered");
+                } else if (answer == Integer.parseInt(ans)) {
+                    score++;
+                    writer.println("Correct");
+                    serverHolder.updateScore();
+                } else {
+                    writer.println("Wrong Answer");
+                }
             }
             writer.println(serverHolder.names + " score is: " + Server.scores);
-            Thread.sleep(5000);
+            Thread.sleep(25000);
         }
     }
 

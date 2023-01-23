@@ -11,9 +11,9 @@ import java.util.Scanner;
 
 public class Server {
     ServerSocket mServer;
-    ServerSocket chatSocket; //
-    int serverPort=1025;
-    int chatSocketPort = 1026;
+    ServerSocket chatSocket;
+    int serverPort = 1032;
+    int chatSocketPort = 1033;
     ChatHandler chatHandler;
     int limit = 3;
     boolean allow2chat = false;
@@ -46,7 +46,7 @@ public class Server {
                 System.out.println("Connected to New Client!");
 
                 Thread t = new Thread(new ClientManager(this, client, names.get(index)));
-                System.out.println(names.get(index));
+                //System.out.println(names.get(index));
                 threads.add(t);
                 t.setName(names.get(index));
                 scores.add(0);
@@ -67,15 +67,14 @@ public class Server {
 
 //                if (threads.size() == limit) {
                 if (usersCount == limit) {
-                    for(int j=0 ; j<threads.size() ; j++) {
+                    for (int j = 0; j < threads.size(); j++) {
                         threads.get(j).start();
                     }
                 }
 //                else if(threads.size()>3){
                 else if (usersCount > 3) {
                     t.start();
-                }
-                else {
+                } else {
                     System.out.println("there are not enough users! please wait");
                 }
             }
@@ -148,23 +147,25 @@ public class Server {
             String type = (String) obj.get("type");
             long port = (Long) obj.get("port");
             String name = (String) obj.get("name");
-            if(type.equals("client")){
+            if (type.equals("client")) {
                 names.add(name);
             }
-            if(type.equals("host")){
-                serverPort= (int) port;
+            if (type.equals("host")) {
+                serverPort = (int) port;
             }
         }
     }
-    public ClientManager findClient(String name){
+
+    public ClientManager findClient(String name) {
         return map.get(name);
     }
-    public void addClientManager(String clientName,ClientManager cm){
+
+    public void addClientManager(String clientName, ClientManager cm) {
         map.put(clientName, cm);
     }
 
-    public void updateScore(){
-        for(int i =0 ; i< names.size() ; i++){
+    public void updateScore() {
+        for (int i = 0; i < names.size(); i++) {
             ClientManager cm = findClient(names.get(i));
             scores.set(i, cm.getScore());
         }

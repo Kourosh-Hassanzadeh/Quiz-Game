@@ -59,23 +59,26 @@ public class ClientManager extends Thread {
                 writer.println(option);
             }
             serverHolder.allow2chat = false;
-            Thread.sleep(15000);
+            Thread.sleep(45000);
             serverHolder.allow2chat = true;
             int answer = (int) (long) object.get("answer");
             Scanner s = new Scanner(fromClientStream);
             String ans = s.nextLine();
-            if (ans.length() == 1) {                                // یعنی احتمالا جواب است
-                if (ans.equals("")) {
-                    writer.println("No answer has entered");
-                } else if (answer == Integer.parseInt(ans)) {
-                    score++;
-                    writer.println("Correct");
-                    serverHolder.updateScore();
-                } else {
-                    writer.println("Wrong Answer");
-                }
+            if (ans.equals("")) {
+                writer.println("No answer has entered");
             }
+            //else if (ans.length() == 1) {                                // یعنی احتمالا جواب است
+
+            else if (answer == Integer.parseInt(ans)) {
+                score++;
+                writer.println("Correct");
+                serverHolder.updateScore();
+            } else {
+                writer.println("Wrong Answer");
+            }
+            //  }
             writer.println(serverHolder.names + " score is: " + Server.scores);
+            //Thread.sleep(5000);
             Thread.sleep(25000);
         }
     }

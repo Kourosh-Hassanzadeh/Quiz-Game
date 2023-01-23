@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Client {
     Socket mSocket;
-    int port = 9090;
+    //int port = 9090;
     String serverAddress = "127.0.0.1";
     InputStream fromServerStream;
     OutputStream toServerStream;
@@ -20,14 +20,13 @@ public class Client {
     Scanner sc;
 
 
-
     public Client() {
         this.sc = new Scanner(System.in);
         try {
 
 
-            mSocket = new Socket(serverAddress, 1025);
-            chatSocket = new Socket(serverAddress, 1026);
+            mSocket = new Socket(serverAddress, 1032);
+            chatSocket = new Socket(serverAddress, 1033);
             System.out.println("connect to server ....");
 
             chatInputStream = chatSocket.getInputStream();
@@ -44,22 +43,23 @@ public class Client {
 
 //            Thread clientChatSend = new Thread(new ClientChatAnswerSend(this));
 //            clientChatSend.start();
-            Thread clientChatReceive = new Thread(new ClientChatRecieve(this));  // receiving msg and put it on terminal
+            Thread clientChatReceive = new Thread(new ClientChatReceive(this));  // receiving msg and put it on terminal
             clientChatReceive.start();
 
             Scanner s = new Scanner(fromServerStream);
             Thread questionHandler = new Thread(new QuestionHandler(this, s, sc));
             questionHandler.start();
 
-            questionChatHandler(s);
+            questionChatHandler();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
-    public void questionChatHandler(Scanner s) {
-        String ans, message;
+
+    public void questionChatHandler() {
+        String ans;
 
         while (true) {
             ans = sc.nextLine();
@@ -68,8 +68,6 @@ public class Client {
             } else
                 writer.println(ans);
         }
-
-
     }
 
     private static class QuestionHandler extends Thread {
@@ -86,14 +84,12 @@ public class Client {
 
         @Override
         public void run() {
-            while(true) {
-                String ans;
-                String message;
+            while (true) {
 
                 String question = s.nextLine();
                 System.out.println(question);
 
-                for (int i = 0; i < 4 ; i++) {
+                for (int i = 0; i < 4; i++) {
                     String option = s.nextLine();
                     System.out.println(option);
                 }
@@ -134,27 +130,28 @@ public class Client {
 //
 //    }
 
-    private static class ClientChatRecieve extends Thread {
+    private static class ClientChatReceive extends Thread {
 
         private Client client;
         private Scanner chatScanner;
 
-        ClientChatRecieve(Client client) {
+        ClientChatReceive(Client client) {
             this.client = client;
             this.chatScanner = new Scanner(client.chatInputStream);
         }
+
         @Override
         public void run() {
             while (true) {
 //              System.out.println("here");
                 String message = chatScanner.nextLine();
-                String[] messageDevide = message.split("#");
-                System.out.println(messageDevide[0] + " says " +messageDevide[1]);
+                String[] messageDivide = message.split("#");
+                System.out.println(messageDivide[0] + " says " + messageDivide[1]);
             }
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new Client();
     }
 }

@@ -13,7 +13,7 @@ public class Server {
     ServerSocket mServer;
     ServerSocket chatSocket;
     int serverPort = 1032;
-    int chatSocketPort = 1033;
+    int chatSocketPort = 1033;  // each user has his own chat_socket
     ChatHandler chatHandler;
     int limit = 3;
     boolean allow2chat = false;
@@ -46,14 +46,11 @@ public class Server {
                 System.out.println("Connected to New Client!");
 
                 Thread t = new Thread(new ClientManager(this, client, names.get(index)));
-                //System.out.println(names.get(index));
                 threads.add(t);
                 t.setName(names.get(index));
                 scores.add(0);
 
-                // new
                 //adding new chat to chatsMap
-//                DataInputStream chatDataInputStream = new DataInputStream(chat.getInputStream());
                 PrintWriter chatPrintWriter = new PrintWriter(chat.getOutputStream(), true);
                 int key = Integer.parseInt(names.get(index).split("-")[1]);
                 chatsMap.put(key, new Message(chat.getInputStream(), chatPrintWriter));
@@ -65,13 +62,11 @@ public class Server {
                 usersCount++;
                 index++;
 
-//                if (threads.size() == limit) {
                 if (usersCount == limit) {
                     for (int j = 0; j < threads.size(); j++) {
                         threads.get(j).start();
                     }
                 }
-//                else if(threads.size()>3){
                 else if (usersCount > 3) {
                     t.start();
                 } else {
@@ -84,7 +79,7 @@ public class Server {
         mServer.close();
     }
 
-    private static class Message {  //new function
+    private static class Message {
         DataInputStream dataInputStream;
         InputStream inputStream;
         Scanner scanner;
@@ -116,9 +111,7 @@ public class Server {
         @Override
         public void run() {
             while (true) {
-//                System.out.println("test");
                 while (true) {
-//                    System.out.println(this.username + "CHAT HANDLER");
                     String message = map.get(this.key).scanner.nextLine();
                     if (message.contains("#")) {
                         System.out.println(message);

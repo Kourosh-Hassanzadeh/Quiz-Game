@@ -41,8 +41,6 @@ public class Client {
             reader = new DataInputStream(fromServerStream);
             writer = new PrintWriter(toServerStream, true);
 
-//            Thread clientChatSend = new Thread(new ClientChatAnswerSend(this));
-//            clientChatSend.start();
             Thread clientChatReceive = new Thread(new ClientChatReceive(this));  // receiving msg and put it on terminal
             clientChatReceive.start();
 
@@ -58,12 +56,11 @@ public class Client {
         }
     }
 
-    public void questionChatHandler() {
+    public void questionChatHandler() { //vorodi miigire
         String ans;
-
         while (true) {
             ans = sc.nextLine();
-            if (ans.contains("#")) {                 // chat
+            if (ans.contains("#")) {      // chat
                 chatSend.println(ans);
             } else
                 writer.println(ans);
@@ -102,33 +99,6 @@ public class Client {
 
     }
 
-//    private static class ClientChatAnswerSend extends Thread {
-//        private Client client;
-//
-//        ClientChatAnswerSend(Client client) {
-//            this.client = client;
-//        }
-//
-//        @Override
-//        public void run() {
-//            while (true) {
-//                synchronized (client.sc) {
-//                    String ans = client.sc.nextLine();
-//                    System.out.println("hi");
-//                    if (ans.contains("#")) {
-//                        client.chatSend.println(ans);
-////                        System.out.println(ans);
-//                    }
-//                    try {
-//                        Thread.sleep(300);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
 
     private static class ClientChatReceive extends Thread {
 
@@ -143,7 +113,6 @@ public class Client {
         @Override
         public void run() {
             while (true) {
-//              System.out.println("here");
                 String message = chatScanner.nextLine();
                 String[] messageDivide = message.split("#");
                 System.out.println(messageDivide[0] + " says " + messageDivide[1]);
